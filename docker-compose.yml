@@ -1,0 +1,30 @@
+services:
+  app:
+    build: .
+    container_name: upskill_app
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - APP_PORT=${APP_PORT:-8000}
+      - DATABASE_URL=${DATABASE_URL}
+      - TZ=${TZ:-UTC}
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16
+    container_name: upskill_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: upskill
+      POSTGRES_USER: upskill
+      POSTGRES_PASSWORD: upskill
+    ports:
+      - "55434:5432"
+    volumes:
+      - pgdata_upskill:/var/lib/postgresql/data
+
+volumes:
+  pgdata_upskill:

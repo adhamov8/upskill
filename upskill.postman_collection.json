@@ -1,0 +1,189 @@
+{
+  "info": {
+    "name": "UpSkill",
+    "_postman_id": "b2b2b2b2-0000-0000-0000-b2b2b2b2b2b2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth","register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@ex.com\",\n  \"password\": \"pass\",\n  \"firstName\": \"Demo\",\n  \"lastName\": \"User\"\n}"
+            }
+          },
+          "response": [],
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const j = pm.response.json();",
+              "if (j.accessToken) pm.environment.set('token', j.accessToken);"
+            ], "type": "text/javascript" }
+          }]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth","login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"demo@ex.com\",\n  \"password\": \"pass\"\n}" }
+          },
+          "event": [{
+            "listen": "test",
+            "script": { "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const j = pm.response.json();",
+              "if (j.accessToken) pm.environment.set('token', j.accessToken);"
+            ], "type": "text/javascript" }
+          }]
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/user/me", "host": ["{{baseUrl}}"], "path": ["user","me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Roles",
+      "item": [
+        {
+          "name": "Assign (mentor|student)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/roles", "host": ["{{baseUrl}}"], "path": ["roles"] },
+            "body": { "mode": "raw", "raw": "{\n  \"role\": \"mentor\"\n}" }
+          }
+        },
+        {
+          "name": "My roles",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/roles/me", "host": ["{{baseUrl}}"], "path": ["roles","me"] } }
+        }
+      ]
+    },
+    {
+      "name": "Mentorship",
+      "item": [
+        {
+          "name": "Student → Create request",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/mentorship/requests", "host": ["{{baseUrl}}"], "path": ["mentorship","requests"] },
+            "body": { "mode": "raw", "raw": "{\n  \"mentorId\": 2,\n  \"message\": \"Would you mentor me?\"\n}" }
+          }
+        },
+        {
+          "name": "Student → My requests",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mentorship/requests", "host": ["{{baseUrl}}"], "path": ["mentorship","requests"] } }
+        },
+        {
+          "name": "Mentor → Incoming requests",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mentor/requests", "host": ["{{baseUrl}}"], "path": ["mentor","requests"] } }
+        },
+        {
+          "name": "Mentor → Approve",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/mentor/requests/1/approve", "host": ["{{baseUrl}}"], "path": ["mentor","requests","1","approve"] }
+          }
+        },
+        {
+          "name": "Mentor → Decline",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/mentor/requests/1/decline", "host": ["{{baseUrl}}"], "path": ["mentor","requests","1","decline"] }
+          }
+        },
+        {
+          "name": "Mentor → Mentees",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/mentor/mentees", "host": ["{{baseUrl}}"], "path": ["mentor","mentees"] } }
+        },
+        {
+          "name": "Student → Mentors",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/student/mentors", "host": ["{{baseUrl}}"], "path": ["student","mentors"] } }
+        }
+      ]
+    },
+    {
+      "name": "Chat",
+      "item": [
+        {
+          "name": "Global → history",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/chat/global/messages", "host": ["{{baseUrl}}"], "path": ["chat","global","messages"] } }
+        },
+        {
+          "name": "Global → post",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/chat/global/messages", "host": ["{{baseUrl}}"], "path": ["chat","global","messages"] },
+            "body": { "mode": "raw", "raw": "{\n  \"message\": \"Hello, world!\"\n}" }
+          }
+        },
+        {
+          "name": "Conversations → list",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/chat/conversations", "host": ["{{baseUrl}}"], "path": ["chat","conversations"] } }
+        },
+        {
+          "name": "Conversation → history (id=1)",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/chat/conversations/1/messages", "host": ["{{baseUrl}}"], "path": ["chat","conversations","1","messages"] } }
+        },
+        {
+          "name": "Conversation → post (id=1)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/chat/conversations/1/messages", "host": ["{{baseUrl}}"], "path": ["chat","conversations","1","messages"] },
+            "body": { "mode": "raw", "raw": "{\n  \"message\": \"Hi from Postman\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Plans",
+      "item": [
+        {
+          "name": "Generate",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/plans/generate", "host": ["{{baseUrl}}"], "path": ["plans","generate"] },
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Golang Basics\",\n  \"start\": \"2025-09-05T09:00:00Z\",\n  \"days\": 3\n}" }
+          }
+        },
+        {
+          "name": "List",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/plans", "host": ["{{baseUrl}}"], "path": ["plans"] } }
+        },
+        {
+          "name": "Get (id=1)",
+          "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/plans/1", "host": ["{{baseUrl}}"], "path": ["plans","1"] } }
+        },
+        {
+          "name": "Complete task (plan=1, task=1)",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/plans/1/tasks/1/complete", "host": ["{{baseUrl}}"], "path": ["plans","1","tasks","1","complete"] }
+          }
+        }
+      ]
+    }
+  ]
+}
